@@ -2,6 +2,8 @@ const PLAYAREA_HEIGHT = 600 - 150;
 const PLAYAREA_WIDTH = 800;
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, update: update });
 
+var welcomeboard;
+
 function preload() {
 
     game.load.image('bullet', 'assets/arrow.png');
@@ -11,6 +13,7 @@ function preload() {
     game.load.image('gameOver', 'assets/gameOver.png');
     game.load.image('level2', 'assets/level2.png');
     game.load.image('gamecomplete', 'assets/gamecomplete.png');
+    game.load.image('gamewelcome', 'assets/gamewelcome.png');
 
     game.load.spritesheet('archer', 'assets/archer.png', 105, 138, 5);
     game.scale.pageAlignHorizontally = true;
@@ -35,7 +38,7 @@ var scoreText;
 var gameOverBoard;
 var levelBoard;
 var gameCompleteBoard;
-var timer;
+var spaceKey;
 
 function create() {
 
@@ -68,7 +71,7 @@ function create() {
     for (var i = 0; i < 10; i++)
     {
         // var c = ballons.create(game.world.randomX, Math.random() * 500, 'ballons', game.rnd.integerInRange(0, 36));
-        var c = ballons.create(350 + (i*40), 400, 'ballons', game.rnd.integerInRange(0, 36));
+        var c = ballons.create(350 + (i*40), 600, 'ballons', game.rnd.integerInRange(0, 36));
         c.name = 'veg' + i;
         c.checkWorldBounds = true;
         c.events.onOutOfBounds.add(resetBallon, this);
@@ -98,14 +101,23 @@ function create() {
     levelBoard.visible = false;
     gameCompleteBoard = game.add.sprite(230, 250, 'gamecomplete');
     gameCompleteBoard.visible = false;
-    
 
-    // archer = game.add.sprite(10, 300, 'archer');
-    // game.physics.enable(archer, Phaser.Physics.ARCADE);
+	//  Register the keys.
+	this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
+    //  Stop the following keys from propagating up to the browser
     // game.input.keyboard.addKeyCapture([ Phaser.Keyboard.SPACEBAR ]);
 
+    game.paused = true;
+    welcomeboard = game.add.sprite(200, 230, 'gamewelcome');
+    // game.time.events.add(Phaser.Timer.SECOND * 4, startGame, this);
 }
+
+// function startGame()
+// {
+//     welcomeboard.visible = false;
+//     game.paused = false;
+// }
 
 function pauseOnReady(anim, frame) {
 
@@ -114,15 +126,26 @@ function pauseOnReady(anim, frame) {
 }
 
 function requestLock() {
-    game.input.mouse.requestPointerLock();
-    archer.loadTexture('archer', 0);
-    archer.animations.add('walk');
-    archer.animations.play('walk', 30, false);
+    if(!game.paused)
+    {
+        game.input.mouse.requestPointerLock();
+        archer.loadTexture('archer', 0);
+        archer.animations.add('walk');
+        archer.animations.play('walk', 30, false);
+    }
 }
 
 function mouseUp() {
-    fireBullet();
-    archer.loadTexture('arch1', 0);
+    if(game.paused)
+    {
+        welcomeboard.visible = false;
+        game.paused = false;
+    }
+    else
+    {
+        fireBullet();
+        archer.loadTexture('arch1', 0);
+    }
 }
 
 function move(pointer, x, y, click) {
@@ -147,6 +170,12 @@ function update() {
     ballons.forEach(element => {
         element.body.velocity.y = -200;
     });
+
+    // if (this.spaceKey.isDown)
+    // {
+    //     welcomeboard.visible = false;
+    //     game.paused = false;
+    // }
 
 }
 
@@ -194,8 +223,7 @@ function collisionHandler (bullet, veg) {
         score += 10;
         refreshScoreboard();
         if(--ballonCount <= 0) {
-            levelBoard.visible = true;
-            game.time.events.add(Phaser.Timer.SECOND * 4, nextLevel, this);
+            nextLevel();
         }
     }
 
@@ -219,7 +247,8 @@ function nextLevel()
 {
     if(level == 1) 
     {
-        startLevel2();
+        levelBoard.visible = true;
+        game.time.events.add(Phaser.Timer.SECOND * 4, startLevel2, this);
     }
     else if(level == 2) 
     {
@@ -241,7 +270,7 @@ function startLevel2()
         if (ballon)
         {
             ballon.reset(300 + (i*40), Math.random() * 500);
-            ballon.body.velocity.y = 100 + (Math.random() * 500);
+            ballon.body.velocity.y = 100 + (i*50);
         }
     }
 
