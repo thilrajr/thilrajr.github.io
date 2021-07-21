@@ -243,10 +243,17 @@ h4 {
   -ms-border-radius: 50%;
   border-radius: 50%;
 }
-#fh5co-header .navbar-brand:before {
+/* #fh5co-header .navbar-brand:before {
   left: 0px;
   background: rgba(250, 85, 85, 0.8);
+} */
+
+.navbar-header img {
+  float: left;
+  height: 50px;
+  margin: 4px;  
 }
+
 #fh5co-header .navbar-brand > span {
   color: #FA5555;
 }
@@ -268,6 +275,7 @@ h4 {
   box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.1);
   margin-top: 0px;
   top: 0;
+  z-index: 200;
 }
 #fh5co-header.navbar-fixed-top .navbar-brand {
   color: #535659;
@@ -904,6 +912,7 @@ h4 {
   border-radius: 50%;
 }
 .fh5co-services .fh5co-post h3 {
+  color:#000;
   font-size: 20px;
   margin-bottom: 15px;
 }
@@ -924,6 +933,12 @@ h4 {
   -moz-flex-wrap: wrap;
   width: 100%;
 }
+
+.core-features p {
+  margin-bottom: 1.5em;
+  font-size: 18px;
+}
+
 .core-features .grid2 {
   width: 50%;
   background-size: cover;
@@ -1088,7 +1103,7 @@ h4 {
 .section-heading {
   float: left;
   width: 100%;
-  padding-bottom: 50px;
+  padding-bottom: 10px;
   margin-bottom: 0px;
 }
 .section-heading h2 {
